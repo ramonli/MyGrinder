@@ -13,6 +13,7 @@ import net.grinder.script.Test
 
 // A TestRunner instance is created for each thread. It can be used to
 // store thread-specific data.
+// NOTE: the groovy test script must be wrapper in a class.
 class HelloWorld{
 	def log;
 
