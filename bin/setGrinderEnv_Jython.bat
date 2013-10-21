@@ -3,7 +3,7 @@ REM -----------------------------------------------------------
 REM Adjust below variable to meet your needs
 REM -----------------------------------------------------------
 set JYTHON_HOME=D:\jython2.5.2
-set GRINDER_HOME=D:\project\grinder-3.6
+set GRINDER_HOME=E:\project\grinder-3.11
 set GRINDER_PROPERTIES=%cd%\..\src\grinder.properties
 REM add the third party libary to classpath, seperated by comma(,).
 set JAVA_CP=
