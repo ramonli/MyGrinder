@@ -21,7 +21,7 @@ class HttpTest{
 		test.record(httpRequest)
 	}
 
-    // This method is called for every run.
+    // There must be closure named 'testRunner', which will be ran once for each 'grinder run'.
 	def testRunner = { 
 		def result = httpRequest.GET("http://www.apache.org/")
 		// write result to a file

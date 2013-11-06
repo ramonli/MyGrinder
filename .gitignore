@@ -1,3 +1,5 @@
 .pydevproject
 .project
-log
+bin/log
+bin/sequence.var
+bin/**-store
