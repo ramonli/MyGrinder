@@ -6,23 +6,23 @@ import static net.grinder.script.Grinder.grinder
 import net.grinder.script.Test
 import net.grinder.plugin.http.HTTPRequest
 import groovy.xml.Namespace
+import groovy.transform.Synchronized
 
 // A TestRunner instance is created for each thread. It can be used to
 // store thread-specific data.
 // NOTE: the groovy test script must be wrapper in a class.
-class HttpTest{
+class WGPETest{
 	private HTTPRequest httpRequest;
 	// Test configuration
 	private String wgpeUrl = "http://202.65.213.109:8135/mlottery_wgpe_gm/ServicePort/"
 	private long merchantId = 167
 
-	HttpTest(){
+	WGPETest(){
 		httpRequest = new HTTPRequest()
 		// Create a Test with a test number and a description. The test will be
 		// automatically registered with The Grinder console if you are using
 		// it.
-		def test = new Test(2, "WGPE Sale")
-		test.record(httpRequest)
+		new Test(2, "WGPE Sale").record(httpRequest)
 	}
 
     // There must be closure named 'testRunner', which will be ran once for each 'grinder run'.
@@ -39,7 +39,7 @@ class HttpTest{
 		//println "run number: ${grinder.runNumber}"
 
 		String timestamp = genTimestamp()
-		String traceMsgId = genTraceMsgId(grinder.agentNumber)
+		String traceMsgId = genTraceMsgId(grinder.agentNumber, grinder.processNumber)
 		String req = assembleRequest(merchantId, timestamp, traceMsgId)
 		// issue request to remote service
 		def response = httpRequest.POST(wgpeUrl, req.bytes)
@@ -79,12 +79,6 @@ class HttpTest{
 					<ns2:Entry>
 						<ns2:SelectedNumber>1,2,3,4,5-4,7</ns2:SelectedNumber>
 					</ns2:Entry>
-					<ns2:Entry>
-						<ns2:SelectedNumber>5N3*</ns2:SelectedNumber>
-					</ns2:Entry>
-					<ns2:Entry>
-						<ns2:SelectedNumber>QP</ns2:SelectedNumber>
-					</ns2:Entry>
 					<ns2:User mobile="13728994799"/>
 				</ns2:SellReq>
 			</soap:Body>
@@ -92,20 +86,35 @@ class HttpTest{
 		"""
 	}
 
-	def synchronized String genTraceMsgId(int agentId){
+	//@Synchronized
+	def String genTraceMsgId(int agentId, int processNumber){
 		if (agentId < 0) agentId = 0
 		if (agentId > 9) throw new IllegalArgumentException("AgentID cant'be greater than 9")
 
-		// read sequence number from file
-		def sequenceFile = new File("sequence.var")
-		if (!sequenceFile.exists())
-		    sequenceFile.createNewFile();
-		int seq = sequenceFile.text.trim()==""?0:sequenceFile.text.trim().toInteger()
-		sequenceFile.withWriter {out ->
-		    out.writeLine("${seq+1}")
-		}
+		// ** Simply set grinder.processes=1, then no need to scratch your head to seek how to generate a globally unique trace message id.
+		//if (processNumber < 0) agentId = 0
+		// when reset worker process from console, the process number will be increased automatically, that says 
+		// after several times of reset, the process number will be greater thatn 10 soon.
+		//if (processNumber > 9) throw new IllegalArgumentException("processNumber cant'be greater than 9")
 
-		"0" + agentId + String.format('%012d',seq)
+		/**
+		 * Must synchronized on 'grinder' instance, as it is singleton in a worker process(jvm), each worker thread will 
+		 * create its own instance of test class, in this case test class is WGPETest.
+		 */
+		synchronized(grinder){
+			// read sequence number from file
+			def sequenceFile = new File("sequence.var")
+			if (!sequenceFile.exists())
+			    sequenceFile.createNewFile();
+			
+			int seq = sequenceFile.text.trim()==""?0:sequenceFile.text.trim().toInteger()
+			sequenceFile.withWriter {out ->
+			    out.writeLine("${seq+1}")
+			}
+			def traceMsgId = "0" + agentId + String.format('%012d',seq)	
+			//grinder.logger.info(traceMsgId)
+			return traceMsgId
+		}
 	}
 
 	def String genTimestamp(){
