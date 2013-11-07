@@ -43,6 +43,7 @@ class WGPETest{
 		String req = assembleRequest(merchantId, timestamp, traceMsgId)
 		// issue request to remote service
 		def response = httpRequest.POST(wgpeUrl, req.bytes)
+		//println response.text
 
 		// check whether the response is successful
 		int respCode = getSuccessfulResponse(response.text)
@@ -112,7 +113,7 @@ class WGPETest{
 			    out.writeLine("${seq+1}")
 			}
 			def traceMsgId = "0" + agentId + String.format('%012d',seq)	
-			//grinder.logger.info(traceMsgId)
+			grinder.logger.info(traceMsgId)
 			return traceMsgId
 		}
 	}
@@ -128,3 +129,4 @@ class WGPETest{
 		envelope[soap.Header][ns2.headResp][ns2.ResponseCode].text().toInteger()
 	}
 }
+
