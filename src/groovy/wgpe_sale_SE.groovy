@@ -1,7 +1,3 @@
-// HTTP Test
-//
-// Sample script to test HTTP server
-
 import static net.grinder.script.Grinder.grinder
 import net.grinder.script.Test
 import net.grinder.plugin.http.HTTPRequest
@@ -11,11 +7,20 @@ import groovy.transform.Synchronized
 // A TestRunner instance is created for each thread. It can be used to
 // store thread-specific data.
 // NOTE: the groovy test script must be wrapper in a class.
+// UPDATE DB:
+// update merchant m set m.sale_balance=99999999999 where m.merchant_code='78954'; 
+// update operator o set o.sale_balance=99999999999 where o.login_name='2785';
+// update mm_account m set m.base_amount=99999999999 where m.login_name='15220202189';
 class WGPETest{
 	private HTTPRequest httpRequest;
 	// Test configuration
-	private String wgpeUrl = "http://202.65.213.109:8135/mlottery_wgpe_gm/ServicePort/"
-	private long merchantId = 167
+	private String wgpeUrl = "http://192.168.100.68:8168/mlottery_wgpe/ServicePort/"
+	private long merchantId = 1182504
+	private String user_mobile = "15220202189"
+	//private String gameId = "4028e4c242356054014235849f6f001e"
+	//private String drawNo = "M6360005"
+	private String gameId = "4028e4c2425b2ef101425b45f23a0005"
+	private String drawNo = "Load-001"	
 
 	WGPETest(){
 		httpRequest = new HTTPRequest()
@@ -49,6 +54,7 @@ class WGPETest{
 		int respCode = getSuccessfulResponse(response.text)
 		if (respCode != 200){
 			grinder.logger.warn("Request with traceMsgId($traceMsgId) got unsuccessful response code $respCode")
+			println "Request with traceMsgId($traceMsgId) got unsuccessful response code $respCode"
 			// Set success = 0 to mark the test as a failure.
 			grinder.statistics.forLastTest.setSuccess(false)   
 		}
@@ -64,23 +70,26 @@ class WGPETest{
 					<ns2:Timestamp>${timestamp}</ns2:Timestamp>
 					<ns2:MerchantId>${merchantId}</ns2:MerchantId>
 					<ns2:TransMessageID>${traceMsgId}</ns2:TransMessageID>
-					<ns2:GameTypeId>8</ns2:GameTypeId>
+					<ns2:GameTypeId>1</ns2:GameTypeId>
 					<ns2:SystemId>1</ns2:SystemId>
 					<ns2:MPOSSignature>11111</ns2:MPOSSignature>
 				</ns2:headReq>
 			</soap:Header>
 			<soap:Body>
 				<ns2:SellReq xmlns:ns2="http://www.lottery.mpos.com/wgpe/port/schemas/">
-					<ns2:MultipleDraws>1</ns2:MultipleDraws>
+					<ns2:multipleDraws>1</ns2:multipleDraws>
+					<ns2:totalAmount>100</ns2:totalAmount>
 					<ns2:PIN>!!!!</ns2:PIN>
 					<ns2:GameDraw>
-						<ns2:Number>20131105</ns2:Number>
-						<ns2:GameId>4028820741e83a240141e84ebcaf0021</ns2:GameId>
+						<ns2:number>${drawNo}</ns2:number>
+						<ns2:gameId>${gameId}</ns2:gameId>
 					</ns2:GameDraw>
 					<ns2:Entry>
-						<ns2:SelectedNumber>1,2,3,4,5-4,7</ns2:SelectedNumber>
+						<ns2:selectedNumber>1,2,3,4,5,6</ns2:selectedNumber>
+						<ns2:betOption>1</ns2:betOption>
+						<ns2:isQuickPick>0</ns2:isQuickPick>						
 					</ns2:Entry>
-					<ns2:User mobile="13728994799"/>
+					<ns2:User mobile="${user_mobile}"/>
 				</ns2:SellReq>
 			</soap:Body>
 		</soap:Envelope>
@@ -113,7 +122,7 @@ class WGPETest{
 			    out.writeLine("${seq+1}")
 			}
 			def traceMsgId = "0" + agentId + String.format('%012d',seq)	
-			grinder.logger.info(traceMsgId)
+			//grinder.logger.info(traceMsgId)
 			return traceMsgId
 		}
 	}
