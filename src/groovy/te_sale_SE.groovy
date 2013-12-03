@@ -17,18 +17,18 @@ class TETest{
 	private HTTPRequest httpRequest;
 	private String testName;
 	// Test configuration
-	private String dataKey = "W0JAMWQ1MGZkMjc2N2U2M2Y2LWVkYTIt"
-	private String macKey = "P2Bbo6+bSSR9O2Qc89f3b4oHTyE1V2gF"
-	private String teUrl = "http://192.168.100.68:8168/mlottery_wgpe/ServicePort/"
+	private String dataKey = "W0JANWNlNGY3NDIzZDA4YTMwYy1lMzBl"
+	private String macKey = "t4yn0C96axUAM7i/qwX/sMTAPZQbd1e4"
+	private String teUrl = "http://192.168.2.155:7155/mlottery_te/transaction_engine/"
 	// Message body variables
 	private String user_mobile = "15220202189"
-	private String gameId = "4028e4c2425b2ef101425b45f23a0005"
-	private String drawNo = "Load-001"	
+	private String gameId = "ff8080814298492c01429c6a78ac0178"
+	private String drawNo = "9898002"	
 	// Message header variables
 	private String protocolVersion = "1.0"
 	private String gpeId = "IGPE"
-	private String deviceId = "111"
-	private String operatorId = "OPERATOR-111"
+	private String deviceId = "321"
+	private String operatorId = "ff8080814129a9b7014129baef56042c"
 	private String batchNo = "1"
 	private int transType = 200	
 	private String traceMsgId = "1"
@@ -90,11 +90,10 @@ class TETest{
         macInput += "Timestamp:${timestamp}|"
         macInput += "Transaction-Type:${transType}|"
         macInput += "Transaction-Id:|"
-        macInput += "Transaction-Id:|"
         macInput += "Response-Code:|"        
         macInput += plainMessageBody
         
-        //println "Ready to MAC:" + macInput
+        println "Ready to MAC:" + macInput.trim()
         return HMacMd5Cipher.doDigest(macInput.trim(), macKey)
     }
 
@@ -108,17 +107,17 @@ class TETest{
 	 */
 	def NVPair[] genHttpHeaders() {
         return [
-                NVPair("X-Protocal-Version", protocolVersion),
-                NVPair("X-Trace-Message-Id", traceMsgId),
-                NVPair("X-Timestamp", timestamp),
-                NVPair("X-Transaction-Type", "${transType}"),
-                NVPair("X-GPE-Id", gpeId),
-                NVPair("X-Terminal-Id", deviceId),
-                NVPair("X-Operator-Id", operatorId),
-                NVPair("X-Trans-BatchNumber", batchNo),
-                NVPair("X-MAC", mac),
-                NVPair("Content-Type", "text/xml"),
-                NVPair("X-Game-Type-Id", "${gameTypeId}")
+                new NVPair("X-Protocal-Version", protocolVersion),
+                new NVPair("X-Trace-Message-Id", traceMsgId),
+                new NVPair("X-Timestamp", timestamp),
+                new NVPair("X-Transaction-Type", "${transType}"),
+                new NVPair("X-GPE-Id", gpeId),
+                new NVPair("X-Terminal-Id", deviceId),
+                new NVPair("X-Operator-Id", operatorId),
+                new NVPair("X-Trans-BatchNumber", batchNo),
+                new NVPair("X-MAC", mac),
+                new NVPair("Content-Type", "text/xml"),
+                new NVPair("X-Game-Type-Id", "${gameTypeId}")
             ]
 	}
 
@@ -166,7 +165,7 @@ class TETest{
 		gameTypeId = 15
 
 		return """
-		<Ticket multipleDraws="2" totalAmount="2500.0" PIN="123456">
+		<Ticket multipleDraws="1" totalAmount="450.0" PIN="123456">
 		    <GameDraw number="${drawNo}" gameId="${gameId}" />
 		    <Entry selectedNumber="1" betOption="1" inputChannel="1" amount="100.0"/>
 		    <Entry selectedNumber="1,2,6" betOption="52" inputChannel ="0" amount="350.0"/>
