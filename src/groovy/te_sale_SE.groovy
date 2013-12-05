@@ -2,8 +2,6 @@ import static net.grinder.script.Grinder.grinder
 import net.grinder.script.Test
 import net.grinder.plugin.http.HTTPRequest
 import HTTPClient.NVPair
-import groovy.xml.Namespace
-import groovy.transform.Synchronized
 import com.mpos.lottery.te.common.encrypt.*
 
 // Test client for Standard Edition
@@ -17,18 +15,18 @@ class TETest{
 	private HTTPRequest httpRequest;
 	private String testName;
 	// Test configuration
-	private String dataKey = "W0JANWNlNGY3NDIzZDA4YTMwYy1lMzBl"
-	private String macKey = "t4yn0C96axUAM7i/qwX/sMTAPZQbd1e4"
-	private String teUrl = "http://192.168.2.155:7155/mlottery_te/transaction_engine/"
+	private String dataKey = "W0JAMWUwYzM4NmRkZDZmZDJjMC0zNzdk"
+	private String macKey = "aTLW6Ux3c+x8/EZNSmaRvavYrwBViQAt"
+	private String teUrl = "http://192.168.100.69:8169/mlottery_te/transaction_engine/"
 	// Message body variables
 	private String user_mobile = "15220202189"
-	private String gameId = "ff8080814298492c01429c6a78ac0178"
-	private String drawNo = "9898002"	
+	private String gameId = "4028e4c242b787220142b78ea8a30004"
+	private String drawNo = "5901"	
 	// Message header variables
 	private String protocolVersion = "1.0"
-	private String gpeId = "IGPE"
-	private String deviceId = "321"
-	private String operatorId = "ff8080814129a9b7014129baef56042c"
+	private String gpeId = "WGPE"
+	private String deviceId = "261"
+	private String operatorId = "4028e4c24246428801424a224c50001c"
 	private String batchNo = "1"
 	private int transType = 200	
 	private String traceMsgId = "1"
@@ -39,22 +37,32 @@ class TETest{
 	private String encryptMessageBody;
 
 	TETest(){
-		// initialize request variables
-		traceMsgId = genTraceMsgId(grinder.agentNumber, grinder.processNumber)
-		timestamp = genTimestamp()
 		plainMessageBody = assembleL590RequestBody()
-		mac = genMac()
-		encryptMessageBody = desMessageBody()
+		/**
+		 * So STRANGE, if put below statements here, seem Grinder-Groovy will to call this constructor
+		 * twice, why? Anyway if put these logic into 'testRunner' closure, it works normally.
+		 */
+		//// initialize request variables
+		//traceMsgId = genTraceMsgId(grinder.agentNumber, grinder.processNumber)
+		//timestamp = genTimestamp()
+		//mac = genMac()
+		//encryptMessageBody = desMessageBody()
 
 		httpRequest = new HTTPRequest()
 		// Create a Test with a test number and a description. The test will be
 		// automatically registered with The Grinder console if you are using
 		// it.
-		new Test(2, "${testName}").record(httpRequest)
+		new Test(1, "${testName}").record(httpRequest)
 	}
 
     // There must be closure named 'testRunner', which will be ran once for each 'grinder run'.
 	def testRunner = { 
+		// initialize request variables
+		traceMsgId = genTraceMsgId(grinder.agentNumber, grinder.processNumber)
+		timestamp = genTimestamp()
+		mac = genMac()
+		encryptMessageBody = desMessageBody()		
+
         // Normally test results are reported automatically when the test returns. If you want to 
         // alter the statistics after a test has completed, you must set delayReports = 1 to delay 
         // the reporting before performing the test. This only affects the current worker thread.
