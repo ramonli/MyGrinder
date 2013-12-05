@@ -168,7 +168,7 @@ class TETest{
 	// - RequestBody of Different Game                                       //
 	// ----------------------------------------------------------------------//
 	def String assembleL590RequestBody() {
-		testName = "TE Sale(L590)"
+		testName = "TE Sale(L590)[" + grinder.properties.getInt("grinder.threads", 1) + "X" + grinder.properties.getInt("grinder.runs", 1) + "]"
 		// set game type
 		gameTypeId = 15
 

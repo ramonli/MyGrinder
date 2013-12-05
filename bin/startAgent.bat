@@ -20,7 +20,7 @@ set CP=
 for /R %GRINDER_HOME%/lib %%a in (*.jar) do (
 	set CP=!CP!;%%a
 )
-set CP=%CP%
+set CP=../src;%CP%
 
 REM echo "use CLASSPATH=%CP%"
 java %JAVA_OPTS% -classpath %CP% net.grinder.Grinder %GRINDER_PROPERTIES%
