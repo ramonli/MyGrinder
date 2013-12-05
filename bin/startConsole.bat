@@ -11,7 +11,7 @@ REM -----------------------------------------------------------
 REM Do not change below part
 REM -----------------------------------------------------------
 set PATH=%JAVA_HOME%\bin;%PATH%
-set GRINDER_PROPERTIES=%cd%\..\src\grinder.properties
+set GRINDER_PROPERTIES=%cd%\..\conf\grinder.properties
 
 REM add all jar files to classpath, refer to http://stackoverflow.com/questions/524081/bat-file-to-create-java-classpath
 setLocal EnableDelayedExpansion
