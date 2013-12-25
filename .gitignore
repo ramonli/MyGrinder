@@ -1,4 +1,4 @@
 .pydevproject
 .project
-bin/log
 bin/sequence.var
+log
