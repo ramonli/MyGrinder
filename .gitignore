@@ -2,4 +2,3 @@
 .project
 bin/log
 bin/sequence.var
-bin/**-store

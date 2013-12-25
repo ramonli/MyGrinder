@@ -12,7 +12,7 @@ from net.grinder.script.Grinder import grinder
 from net.grinder.script import Test
 
 # A shorter alias for the grinder.logger.output() method.
-log = grinder.logger.output
+log = grinder.logger.info
 
 # Create a Test with a test number and a description. The test will be
 # automatically registered with The Grinder console if you are using
@@ -22,7 +22,7 @@ test1 = Test(1, "Log method")
 # Wrap the log() method with our Test and call the result logWrapper.
 # Calls to logWrapper() will be recorded and forwarded on to the real
 # log() method.
-logWrapper = test1.record(log)
+test1.record(log)
 
 # A TestRunner instance is created for each thread. It can be used to
 # store thread-specific data.
@@ -30,5 +30,5 @@ class TestRunner:
 
     # This method is called for every run.
     def __call__(self):
-        logWrapper("Hello World")
+        log("Hello World")
 
