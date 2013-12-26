@@ -29,6 +29,28 @@ class HelloWorld{
 
     // This method is called for every run.
 	def testRunner = { 
-		log.info("hello, world")
+		grinder.statistics.delayReports = 1
+
+		log.info("hello, world")	// this is the last test
+		
+		// The setting of custom statistics must be stated after the test method, here is 'log.info()', otherwise the forLastTest will get null.
+		grinder.statistics.forLastTest.setLong("userLong0", 150)
+		println  grinder.statistics.forLastTest.getLong("userLong0")
+
+		grinder.statistics.forLastTest.setLong("userLong1", grinder.runNumber)
+		println grinder.runNumber
+
+		if (grinder.runNumber == 1 || grinder.runNumber == 0){
+			// if set the last test as false, all statistics of the last test won't be reported.
+			grinder.statistics.forLastTest.setSuccess(false)   
+		}
+
+		// The sum() and count() can only be applied on sample statistics, and at present there is only one sample statistics 'timedTests'(refer to
+		// http://grinder.sourceforge.net/g3/script-javadoc/net/grinder/script/Statistics.html), and also the explanation from author of grinder(refer
+		// to http://grinder.996249.n3.nabble.com/User-defined-mean-test-times-td8712.html)
+		//
+		// Grinder has some built-in statistis for custom usage, such as userLong0, userDouble0 etc. The non-sample statistics will be cumulated on 
+		// each successful test. 
+		grinder.statistics.registerSummaryExpression("Time to assemble", "(/ userLong0 userLong1)")
 	}
 }

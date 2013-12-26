@@ -16,4 +16,4 @@ set CP=%GRINDER_HOME%/lib/grinder.jar
 
 REM echo "use CLASSPATH=%CP%"
 REM refer to http://grinder.sourceforge.net/g3/tcpproxy.html
-java %JAVA_OPTS% -classpath %CP% net.grinder.TCPProxy
+java %JAVA_OPTS% -classpath %CP% net.grinder.TCPProxy -remotehost 192.168.2.155 -remoteport 2013 -http >grinder.py

@@ -33,7 +33,7 @@ class IgpeTest{
 	}
 
     // There must be closure named 'testRunner', which will be ran once for each 'grinder run'.
-	def testRunner = { 
+	def testRunner = { 		
         // Normally test results are reported automatically when the test returns. If you want to 
         // alter the statistics after a test has completed, you must set delayReports = 1 to delay 
         // the reporting before performing the test. This only affects the current worker thread.
@@ -47,7 +47,7 @@ class IgpeTest{
 
 		String timestamp = genTimestamp()
 		String traceMsgId = genTraceMsgId(grinder.agentNumber, grinder.processNumber)
-		// issue request to remote service
+		
 		def reqBytes = igpeClient.assembleRequest("1.5", traceMsgId, timestamp, opLoginName, Constants.REQ_SELL_TICKET+ "", deviceId + "",
 			"1", Constants.GAME_TYPE_LOTTO + "", assembleRequestBody(), dataKey, macKey)
 
@@ -66,6 +66,7 @@ class IgpeTest{
 			// Set success = 0 to mark the test as a failure.
 			grinder.statistics.forLastTest.setSuccess(false)   
 		}
+
 	}
 
 	def String assembleRequestBody() {
