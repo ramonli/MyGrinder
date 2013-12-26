@@ -1,9 +1,10 @@
 import static net.grinder.script.Grinder.grinder
 import net.grinder.script.Test
-import net.mpos.igpe.test.IgpeClient 
+import net.mpos.igpe.test.IgpeLoadTestClient 
 import net.mpos.igpe.common.tlvutilities.TLVElement
 import net.mpos.igpe.common.tlvutilities.TLVParser
 import net.mpos.igpe.core.Constants
+import net.mpos.igpe.util.TerminalMessageHandler
 
 // A TestRunner instance is created for each thread. It can be used to
 // store thread-specific data.
@@ -13,11 +14,11 @@ import net.mpos.igpe.core.Constants
 // update operator o set o.sale_balance=99999999999 where o.login_name='2785';
 // update mm_account m set m.base_amount=99999999999 where m.login_name='15220202189';
 class IgpeTest{
-	private IgpeClient igpeClient;
+	private IgpeLoadTestClient igpeClient;
 	// Test configuration
 	// have to insert a record to table 'operator_session' manually, or use the existed operator session.
-	private String dataKey = "Mxj7Z7FnWhbIvGqC28lzBlbGd3fYjts7";
-	private String macKey = "42APZkZFSQOs/iqiYZoWz4Z5DdjneRuPSbcPt3Mgz/k=";
+	private String dataKey = "SAnnT6Ha62pBiFdlSlX8hq8crnfMfnr2";
+	private String macKey = "I7VZve2MVIsh4sVMmDq2lphSXHyZDpSJibKoCJz98ho=";
 	private String igpeHost = "192.168.2.155";
 	private int igpePort = 2013;
 	private String opLoginName = "222";
@@ -25,14 +26,10 @@ class IgpeTest{
 	// configuration of message body
 	private String user_mobile = "15220202189"
 	private String gameId = "ff80808143234d8f014323c991620088"
-	private String drawNo = "load-1"		
+	private String drawNo = "load-2"		
 
 	IgpeTest(){
-		igpeClient = new IgpeClient(igpeHost, igpePort)
-		// Create a Test with a test number and a description. The test will be
-		// automatically registered with The Grinder console if you are using
-		// it.
-		new Test(2, "IGPE Sale").record(igpeClient)
+		igpeClient = new IgpeLoadTestClient(igpeHost, igpePort)
 	}
 
     // There must be closure named 'testRunner', which will be ran once for each 'grinder run'.
@@ -51,12 +48,18 @@ class IgpeTest{
 		String timestamp = genTimestamp()
 		String traceMsgId = genTraceMsgId(grinder.agentNumber, grinder.processNumber)
 		// issue request to remote service
-		def response = igpeClient.igpe("1.5", traceMsgId, timestamp, opLoginName, Constants.REQ_SELL_TICKET+ "", deviceId + "",
+		def reqBytes = igpeClient.assembleRequest("1.5", traceMsgId, timestamp, opLoginName, Constants.REQ_SELL_TICKET+ "", deviceId + "",
 			"1", Constants.GAME_TYPE_LOTTO + "", assembleRequestBody(), dataKey, macKey)
-		//println response.text
+
+		// Create a Test with a test number and a description. The test will be
+		// automatically registered with The Grinder console if you are using
+		// it. Instrument the supplied target object. Subsequent calls to target 
+		// will be recorded against the statistics for this Test.
+		new Test(2, "IGPE Sale").record(igpeClient)
+		def respBytes = igpeClient.connectAndRequest(reqBytes);
 
 		// check whether the response is successful
-		int respCode = getResponseCode(response)
+		int respCode = getResponseCode(respBytes)
 		if (respCode != 200){
 			grinder.logger.warn("Request with traceMsgId($traceMsgId) got unsuccessful response code $respCode")
 			println "Request with traceMsgId($traceMsgId) got unsuccessful response code $respCode"
@@ -111,10 +114,12 @@ class IgpeTest{
 		new Date().format("yyyyMMddHHmmss")
 	}
 
-	def getResponseCode(LinkedList<TLVElement> respTlvs) {
+	def int getResponseCode(byte[] respBytes) {
+		// Decode the tags
+		LinkedList<TLVElement> respTlvs = TerminalMessageHandler.GetRequestList(respBytes);
 		def respStr = TLVParser.GetObjectFromList(respTlvs, Constants.TAG_RESPONSE_CODE).GetValueAsString();
 		def (respType, respCode) = respStr.tokenize("#")
-		respCode.toInteger()
+		return respCode.toInteger()
 	}
 }
 
