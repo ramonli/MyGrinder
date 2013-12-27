@@ -23,7 +23,7 @@ class HelloWorld{
 		// Create a Test with a test number and a description. The test will be
 		// automatically registered with The Grinder console if you are using
 		// it.
-		def test = new Test(1, "TE Sale(L590)[" + grinder.properties.getInt("grinder.threads", 1) + "X" + grinder.properties.getInt("grinder.runs", 1) + "]")
+		Test test = new Test(1, "TE Sale(L590)[" + grinder.properties.getInt("grinder.threads", 1) + "X" + grinder.properties.getInt("grinder.runs", 1) + "]")
 		test.record(log)
 	}
 
