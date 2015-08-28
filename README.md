@@ -1,8 +1,8 @@
 Dependencies
 ----------------------------------------------
-Groovy - 2.4.4
-Grinder - 3.11
-grinder-groovy - https://github.com/DealerDotCom/grinder-groovy
+* Groovy - 2.4.4
+* Grinder - 3.11
+* grinder-groovy - https://github.com/DealerDotCom/grinder-groovy
 
 Setup Grinder
 ----------------------------------------------
