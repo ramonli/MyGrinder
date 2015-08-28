@@ -7,10 +7,13 @@ Dependencies
 Setup Grinder
 ----------------------------------------------
 1. Download grinder, and unzip it to a directory.
-2. Create a directory 'ext' under GRINDER_HOME/lib, and put /lib/grinder-groovy-1.0.0-SNAPSHOT.jar and groovy-all-VERSION.jar under it.
-3. edit bin/startAgent.bat, set variable 'GRINDER_HOME' to grinder installation directory.
-Noted that the full path of GRINDER_HOME and GROOVYGRINDER_HOME can't contain space, otherwise 'startAgent.bat' may can't startup.
+2. Edit bin/startAgent.bat, set variable 'GRINDER_HOME' to grinder installation directory.
+
+Notes
+----------------------------------------------
+1. The full path of GRINDER_HOME and GROOVYGRINDER_HOME shouldn't contain space, otherwise 'startAgent.bat' may fail to startup.
+2. All 3rd party libraries should be put under lib directory, and they will be added to classpath automatically.
 
 Logging
 ----------------------------------------------
-Configure logging by edit conf/logback-worker.xml
+Configure logging by editing conf/logback-worker.xml

@@ -17,11 +17,13 @@ set GRINDER_PROPERTIES=%cd%\..\conf\grinder.properties
 REM add all jars under GRINDER_HOME/lib to classpath, refer to http://stackoverflow.com/questions/524081/bat-file-to-create-java-classpath
 setLocal EnableDelayedExpansion
 set CP=
-for /R %GRINDER_HOME%/lib/ext %%a in (*.jar) do (
+REM EXT_LIB will contain all 3rd party libraries.
+set EXT_LIB=%cd%/../lib
+for /R %EXT_LIB% %%a in (*.jar) do (
 	set CP=!CP!;%%a
 )
 set CP=../conf;%CP%;%GRINDER_HOME%/lib/grinder.jar
 
 REM echo "use CLASSPATH=%CP%"
-REM echo "java %JAVA_OPTS% -classpath %CP% net.grinder.Grinder %GRINDER_PROPERTIES%"
+echo "java %JAVA_OPTS% -classpath %CP% net.grinder.Grinder %GRINDER_PROPERTIES%"
 java %JAVA_OPTS% -classpath %CP% net.grinder.Grinder %GRINDER_PROPERTIES%
